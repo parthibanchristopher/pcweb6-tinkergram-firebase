@@ -11,6 +11,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 export default function PostPageAdd() {
     const [user, loading] = useAuthState(auth);
     const [caption, setCaption] = useState("");
+    const [location, setLocation] = useState("");
     const [image, setImage] = useState("");
     const [previewImage, setPreviewImage] = useState(
         "https://zca.sg/img/placeholder"
@@ -22,11 +23,9 @@ export default function PostPageAdd() {
         const imageReference = ref(storage, `images/${image.name}`);
         const response = await uploadBytes(imageReference, image);
         const imageUrl = await getDownloadURL(response.ref);
-        await addDoc(collection(db, "posts"), { caption, image: imageUrl });
+        await addDoc(collection(db, "posts"), { caption, location, image: imageUrl });
         navigate("/");
     }
-
-
 
     useEffect(() => {
         if (loading) return;
@@ -56,6 +55,17 @@ export default function PostPageAdd() {
                             onChange={(text) => setCaption(text.target.value)}
                         />
                     </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="location">
+                        <Form.Label>Location</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Singapore, Singapore"
+                            value={location}
+                            onChange={(text) => setLocation(text.target.value)}
+                        />
+                    </Form.Group>
+
                     <Image
                         src={previewImage}
                         style={{
@@ -64,6 +74,7 @@ export default function PostPageAdd() {
                             height: "10rem",
                         }}
                     />
+
                     <Form.Group className="mb-3" controlId="image">
                         <Form.Label>Image</Form.Label>
                         <Form.Control
@@ -72,7 +83,7 @@ export default function PostPageAdd() {
                                 const imageFile = e.target.files[0];
                                 const previewImage = URL.createObjectURL(imageFile);
                                 setImage(imageFile);
-                                setPreviewImage(imageFile);
+                                setPreviewImage(previewImage);
                             }}
                         />
 

@@ -9,6 +9,7 @@ import { deleteDoc, doc, getDoc } from "firebase/firestore";
 
 export default function PostPageDetails() {
     const [caption, setCaption] = useState("");
+    const [location, setLocation] = useState("");
     const [image, setImage] = useState("");
     const params = useParams();
     const id = params.id;
@@ -25,6 +26,7 @@ export default function PostPageDetails() {
         const postDocument = await getDoc(doc(db, "posts", id));
         const post = postDocument.data();
         setCaption(post.caption);
+        setLocation(post.location);
         setImage(post.image);
     }
 
@@ -55,6 +57,7 @@ export default function PostPageDetails() {
                         <Card>
                             <Card.Body>
                                 <Card.Text>{caption}</Card.Text>
+                                <Card.Text>📍{location}</Card.Text>
                                 <Card.Link href={`/update/${id}`}>Edit</Card.Link>
                                 <Card.Link
                                     onClick={() => deletePost(id)}

@@ -12,6 +12,7 @@ export default function PostPageUpdate() {
     const params = useParams();
     const id = params.id;
     const [caption, setCaption] = useState("");
+    const [location, setLocation] = useState("");
     const [image, setImage] = useState("");
     const [previewImage, setPreviewImage] = useState(
         "https://zca.sg/img/placeholder"
@@ -23,7 +24,7 @@ export default function PostPageUpdate() {
         const imageReference = ref(storage, `images/${image.name}`);
         const response = await uploadBytes(imageReference, image);
         const imageUrl = await getDownloadURL(response.ref);
-        await updateDoc(doc(db, "posts", id), { caption, image: imageUrl });
+        await updateDoc(doc(db, "posts", id), { caption, location, image: imageUrl });
         navigate("/");
     }
 
@@ -32,6 +33,7 @@ export default function PostPageUpdate() {
         const postDocument = await getDoc(doc(db, "posts", id));
         const post = postDocument.data();
         setCaption(post.caption);
+        setLocation(post.location);
         setImage(post.image);
         setPreviewImage(post.image);
     }
@@ -66,6 +68,17 @@ export default function PostPageUpdate() {
                             onChange={(text) => setCaption(text.target.value)}
                         />
                     </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="location">
+                        <Form.Label>Location</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Singapore, Singapore"
+                            value={location}
+                            onChange={(text) => setLocation(text.target.value)}
+                        />
+                    </Form.Group>
+
                     <Image
                         src={previewImage}
                         style={{
