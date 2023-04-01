@@ -16,6 +16,7 @@ export default function PostPageAdd() {
     const [previewImage, setPreviewImage] = useState(
         "https://zca.sg/img/placeholder"
     );
+    const [uid, setUid] = useState("");
 
     const navigate = useNavigate();
 
@@ -23,13 +24,14 @@ export default function PostPageAdd() {
         const imageReference = ref(storage, `images/${image.name}`);
         const response = await uploadBytes(imageReference, image);
         const imageUrl = await getDownloadURL(response.ref);
-        await addDoc(collection(db, "posts"), { caption, location, image: imageUrl });
+        await addDoc(collection(db, "posts"), { caption, location, uid, date: Date.now(), image: imageUrl });
         navigate("/");
     }
 
     useEffect(() => {
         if (loading) return;
         if (!user) return navigate("/login");
+        setUid(user.uid);
     }, [navigate, user, loading]);
 
     return (

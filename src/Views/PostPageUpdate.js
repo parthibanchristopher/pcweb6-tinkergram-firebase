@@ -19,15 +19,15 @@ export default function PostPageUpdate() {
     );
     const [user, loading] = useAuthState(auth);
     const navigate = useNavigate();
+    const [uid, setUid] = useState("");
 
     async function updatePost() {
         const imageReference = ref(storage, `images/${image.name}`);
         const response = await uploadBytes(imageReference, image);
         const imageUrl = await getDownloadURL(response.ref);
-        await updateDoc(doc(db, "posts", id), { caption, location, image: imageUrl });
+        await updateDoc(doc(db, "posts", id), { caption, location, uid, date: Date.now(), image: imageUrl });
         navigate("/");
     }
-
 
     async function getPost(id) {
         const postDocument = await getDoc(doc(db, "posts", id));
@@ -41,6 +41,7 @@ export default function PostPageUpdate() {
     useEffect(() => {
         if (loading) return;
         if (!user) navigate("/login");
+        setUid(user.uid);
         getPost(id);
     }, [id, navigate, user, loading]);
 
